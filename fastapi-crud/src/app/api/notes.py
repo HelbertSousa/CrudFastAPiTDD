@@ -28,3 +28,13 @@ async def read_note(id: int):
 @router.get("/", response_model=List[NoteDB])
 async def read_all_notes():
     return await crud.get_all()
+
+@router.delete("/{id}/", response_model=NoteDB)
+async def delete_note(id: int):
+    note = await crud.get(id)
+    if not note:
+        raise HTTPException(status_code=404, detail="Note not found")
+
+    await crud.delete(id)
+
+    return note
