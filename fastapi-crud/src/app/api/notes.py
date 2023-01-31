@@ -38,3 +38,18 @@ async def delete_note(id: int):
     await crud.delete(id)
 
     return note
+
+@router.put("/{id}/", response_model=NoteDB)
+async def update_note(payload: NoteSchema, id: int = Path(..., gt=0),):
+    note = await crud.get(id)
+    if not note:
+        raise HTTPException(status_code=404, detail="Note not found")
+
+    note_id = await crud.put(id, payload)
+
+    response_object = {
+        "id": note_id,
+        "title": payload.title,
+        "description": payload.description,
+    }
+    return response_object
